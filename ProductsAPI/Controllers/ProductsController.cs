@@ -114,7 +114,8 @@ namespace ProductsAPI.Controllers
                     Name = product.Name,
                     Price = product.Price,
                     Quantity = product.Quantity,
-                    CategoriaId = product.CategoryId,
+                    CategoryId = product.Category?.Id,
+                    CategoryName = product.Category?.Name
                 });
             }
 
@@ -137,7 +138,7 @@ namespace ProductsAPI.Controllers
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,
-                CategoriaId = product.CategoryId,
+                CategoryId = product.CategoryId
             };
 
             //retornando os dados do dto

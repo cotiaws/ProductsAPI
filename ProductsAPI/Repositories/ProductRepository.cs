@@ -1,4 +1,6 @@
-﻿using ProductsAPI.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductsAPI.Contexts;
+using ProductsAPI.DTOs;
 using ProductsAPI.Entities;
 
 namespace ProductsAPI.Repositories
@@ -42,6 +44,7 @@ namespace ProductsAPI.Repositories
             {
                 return dataContext
                     .Set<Product>()
+                    .Include(p => p.Category) //JOIN
                     .OrderBy(p => p.Name)
                     .ToList();
             }
@@ -55,6 +58,25 @@ namespace ProductsAPI.Repositories
                 return dataContext
                     .Set<Product>()
                     .Find(id);
+            }
+        }
+
+        //método para consultar o somatório da quantidade de produtos
+        //para cada categoria do banco de dados
+        public List<CategoryProductsResponseDto> GroupByCategoria()
+        {
+            using (var dataContext = new DataContext())
+            {
+                return dataContext
+                    .Set<Product>() //Tabela de produtos
+                    .Include(p => p.Category) //Junção com a tabela de categoria
+                    .GroupBy(p => p.Category.Name) //Agrupando pelo nome da categoria
+                    .Select(g => new CategoryProductsResponseDto
+                    {
+                        Category = g.Key, //Nome da categoria
+                        Products = g.Sum(p => p.Quantity) //Somatório da quantidade de produtos
+                    })
+                    .ToList(); //retonar uma lista do DTO
             }
         }
     }
